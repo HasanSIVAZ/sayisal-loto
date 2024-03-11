@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sayısal Loto Oyunu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sayısal Loto Oyunu</h1>
+    <p>Lütfen 6 tahmin giriniz:</p>
+    <input type="number" id="number1" min="1" max="49">
+    <input type="number" id="number2" min="1" max="49">
+    <input type="number" id="number3" min="1" max="49">
+    <input type="number" id="number4" min="1" max="49">
+    <input type="number" id="number5" min="1" max="49">
+    <input type="number" id="number6" min="1" max="49">
+    <button id="tahminButton" onclick="playLotto()">Tahmin Gir</button>
+    <br><br>
+    
+    <button id="kuraButton" onclick="kuraCek()">Loto Sonuçlarını Gör</button>
+    <div id="results"></div>
+    <h2>Çıkan Numaralar:</h2>
+    <ul id="cikanNumaralar"></ul>
+
+    <script>
+        var secilenNumaralar = [];
+        var cikanNumaralar = [];
+
+        function tahminEt(inputId) {
+            var tahminInput = document.getElementById(inputId).value;
+            var tahmin = parseInt(tahminInput);
+            
+            if (isNaN(tahmin) || tahmin < 1 || tahmin > 49) {
+                alert("siliconmadeacademy.com'un mesajı;"+"<br>"+"1-49 sayıları arasında bir sayı girmelisiniz.");
+                return;
+            }
+
+            if (secilenNumaralar.length >= 6) {
+                alert("siliconmadeacademy.com'un mesajı;"+"<br>"+"Zaten 6 sayı seçtiniz. Kurayı çekmek için 'Kurayı Çek' butonuna basın.");
+                return;
+            }
+
+            if (secilenNumaralar.includes(tahmin)) {
+                alert("siliconmadeacademy.com'un mesajı;"+"<br>"+"Aynı tahmin bir kez girilebilir.");
+                document.getElementById(inputId).value = ""; // Sağdaki kutudaki girilen sayıyı silme
+                return;
+            }
+
+            secilenNumaralar.push(tahmin);
+            document.getElementById(inputId).value = "";
+
+            if (secilenNumaralar.length === 6) {
+                document.getElementById("tahminButton").disabled = true;
+                document.getElementById("kuraButton").disabled = false; // Kurayı Çek butonunu aktif hale getirme
+            }
+        }
+
+        function playLotto() {
+            var userNumbers = [];
+            userNumbers.push(parseInt(document.getElementById("number1").value));
+            userNumbers.push(parseInt(document.getElementById("number2").value));
+            userNumbers.push(parseInt(document.getElementById("number3").value));
+            userNumbers.push(parseInt(document.getElementById("number4").value));
+            userNumbers.push(parseInt(document.getElementById("number5").value));
+            userNumbers.push(parseInt(document.getElementById("number6").value));
+
+            userNumbers = userNumbers.filter(function (value, index, self) {
+                return self.indexOf(value) === index;
+            });
+
+            if (userNumbers.length !== 6) {
+                alert("siliconmadeacademy.com'un mesajı;"+" "+"Lütfen farklı sayılar girin.");
+                return;
+            }
+
+            userNumbers.sort(function(a, b){return a-b});
+            
+            for (var i = 0; i < userNumbers.length; i++) {
+                document.getElementById("number" + (i+1)).value = userNumbers[i];
+            }
+
+            var knownNumbersLabel = document.createElement("label");
+            knownNumbersLabel.textContent = "Bilinen Sayılar: " + userNumbers.join(", ");
+            document.getElementById("results").appendChild(knownNumbersLabel);
+
+            var knownNumbersCountLabel = document.createElement("label");
+            knownNumbersCountLabel.textContent = "Bilinen Sayı Adedi: " + userNumbers.length;
+            document.getElementById("results").appendChild(knownNumbersCountLabel);
+
+            // Kullanıcının tahmin ettiği sayılar ile çıkan sayıları kontrol et
+            var matchedNumbers = userNumbers.filter(function(value) {
+                return cikanNumaralar.includes(value);
+            });
+
+            var matchedNumbersLabel = document.createElement("label");
+            matchedNumbersLabel.textContent = "Eşleşen Sayılar: " + matchedNumbers.join(", ");
+            document.getElementById("results").appendChild(matchedNumbersLabel);
+
+            var matchedNumbersCountLabel = document.createElement("label");
+            matchedNumbersCountLabel.textContent = "Eşleşen Sayı Adedi: " + matchedNumbers.length;
+            document.getElementById("results").appendChild(matchedNumbersCountLabel);
+        }
+
+        function kuraCek() {
+            cikanNumaralar = [];
+
+            var cikanNumaralarList = document.getElementById("cikanNumaralar");
+            cikanNumaralarList.innerHTML = "";
+
+            while (cikanNumaralar.length < 6) {
+                var randomNum = Math.floor(Math.random() * 49) + 1;
+                if (!cikanNumaralar.includes(randomNum)) {
+                    cikanNumaralar.push(randomNum);
+                }
+            }
+
+            cikanNumaralar.sort(function(a, b){return a-b});
+
+            for (var i = 0; i < cikanNumaralar.length; i++) {
+                var li = document.createElement("li");
+                li.textContent = cikanNumaralar[i];
+                cikanNumaralarList.appendChild(li);
+            }
+
+            document.getElementById("kuraButton").disabled = true;
+        }
+    </script>
+</body>
+</html>
